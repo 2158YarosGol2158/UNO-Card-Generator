@@ -48,7 +48,8 @@ const ASSETS = {
     { id: 'aim', name: 'Aim',  path: './assets/THIRD_LEVEL/UNO_AIM.png' },
     { id: 'n+4', name: '+4 Cards',  path: './assets/THIRD_LEVEL/UNO_NUMBER_+4.png' },
     { id: 'color', name: 'Color Change',  path: './assets/THIRD_LEVEL/UNO_COLOR_CHANGE.png' },
-    { id: 'uno', name: 'UNO',  path: './assets/THIRD_LEVEL/UNO_UNO.png' }
+    { id: 'uno', name: 'UNO',  path: './assets/THIRD_LEVEL/UNO_UNO.png' },
+    { id: 'w4cards', name: 'White 4 Cards', path: './assets/THIRD_LEVEL/UNO_WHITE_4CARDS.png' },
   ]
 };
 
