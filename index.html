@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNO Sprite Generator - Pure Static</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>UNO Sprite Generator</h1>
+            <p>Create and download your custom UNO card sprites - No Server Required</p>
+        </header>
+        
+        <main class="app-main">
+            <div class="preview-section">
+                <div class="canvas-wrapper premium-card">
+                    <canvas id="cardCanvas"></canvas>
+                </div>
+                <div class="action-bar">
+                    <button id="downloadBtn" class="button">
+                        <span>Download PNG</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </button>
+                    <button id="shareBtn" class="button secondary">
+                        <span>Share Link</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    </button>
+                </div>
+                <div id="toast" class="toast premium-card" style="display: none;">Link copied to clipboard!</div>
+            </div>
+
+            <div class="controls-section">
+                <div class="control-group premium-card">
+                    <h3>Background Layer</h3>
+                    <div id="bgGrid" class="asset-grid">
+                        <!-- Backgrounds will be injected here -->
+                    </div>
+                </div>
+
+                <div class="control-group premium-card">
+                    <h3>Corner Overlay</h3>
+                    <div id="overlayGrid" class="asset-grid">
+                        <!-- Overlays will be injected here -->
+                    </div>
+                </div>
+
+                <div class="control-group premium-card">
+                    <h3>Center Layer</h3>
+                    <div id="centerGrid" class="asset-grid">
+                        <!-- Centers will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>Pure Client-Side UNO Card Generator | Ready for GitHub Pages</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
