@@ -1,4 +1,4 @@
-// v2.1
+// v2.2
 const ASSETS = {
   backgrounds: [
     { id: 'black', name: 'Black', path: './assets/FIRST_LEVEL/UNO_BLACK.png' },
