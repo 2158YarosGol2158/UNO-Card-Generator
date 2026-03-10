@@ -55,7 +55,7 @@ const ASSETS = {
 let state = {
     selectedBg: ASSETS.backgrounds[0],
     selectedOverlay: null,
-    selectedCenter: ASSETS.centers[0]
+    selectedCenter: null
 };
 
 // DOM Elements
@@ -84,14 +84,14 @@ function loadStateFromUrl() {
 
     if (bgId) state.selectedBg = ASSETS.backgrounds.find(b => b.id === bgId) || ASSETS.backgrounds[0];
     if (ovId) state.selectedOverlay = ASSETS.overlays.find(o => o.id === ovId) || null;
-    if (ctId) state.selectedCenter = ASSETS.centers.find(c => c.id === ctId) || ASSETS.centers[0];
+    if (ctId) state.selectedCenter = ASSETS.centers.find(c => c.id === ctId) || null;
 }
 
 function updateUrl() {
     const params = new URLSearchParams();
     params.set('bg', state.selectedBg.id);
     if (state.selectedOverlay) params.set('ov', state.selectedOverlay.id);
-    params.set('ct', state.selectedCenter.id);
+    if (state.selectedCenter) params.set('ct', state.selectedCenter.id);
     
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
@@ -120,8 +120,13 @@ function renderAssetGrids() {
     `).join('');
 
     // Centers
-    centerGrid.innerHTML = ASSETS.centers.map(ct => `
-        <button class="asset-item ${state.selectedCenter.id === ct.id ? 'active' : ''}" data-type="ct" data-id="${ct.id}">
+    centerGrid.innerHTML = `
+        <button class="asset-item ${!state.selectedCenter ? 'active' : ''}" data-type="ct" data-id="none">
+            <div class="empty-slot">None</div>
+            <span>None</span>
+        </button>
+    ` + ASSETS.centers.map(ct => `
+        <button class="asset-item ${state.selectedCenter?.id === ct.id ? 'active' : ''}" data-type="ct" data-id="${ct.id}">
             <img src="${ct.path}" alt="${ct.name}" />
             <span>${ct.name}</span>
         </button>
@@ -174,7 +179,7 @@ function setupEventListeners() {
         } else if (type === 'ov') {
             state.selectedOverlay = id === 'none' ? null : ASSETS.overlays.find(o => o.id === id);
         } else if (type === 'ct') {
-            state.selectedCenter = ASSETS.centers.find(c => c.id === id);
+            state.selectedCenter = id === 'none' ? null : ASSETS.centers.find(c => c.id === id);
         }
 
         renderAssetGrids();
@@ -185,7 +190,9 @@ function setupEventListeners() {
     downloadBtn.addEventListener('click', () => {
         try {
             const link = document.createElement('a');
-            link.download = `uno_card_${state.selectedBg.id}_${state.selectedCenter.id}.png`;
+            const bgName = state.selectedBg.id;
+            const ctName = state.selectedCenter ? state.selectedCenter.id : 'empty';
+            link.download = `uno_card_${bgName}_${ctName}.png`;
             
             // Generate the image data
             const dataUrl = canvas.toDataURL('image/png');
