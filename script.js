@@ -56,9 +56,9 @@ const ASSETS = {
 let state = {
     selectedBg: ASSETS.backgrounds[0],
     selectedOverlay: null,
-    selectedCenter: null
+    selectedCenter: null,
+    deck: JSON.parse(localStorage.getItem('uno_deck')) || []
 };
-
 
 const canvas = document.getElementById('cardCanvas');
 const ctx = canvas.getContext('2d');
@@ -68,12 +68,39 @@ const centerGrid = document.getElementById('centerGrid');
 const downloadBtn = document.getElementById('downloadBtn');
 const shareBtn = document.getElementById('shareBtn');
 const toast = document.getElementById('toast');
+const deckContainer = document.getElementById('deckContainer');
+const deckStack = document.getElementById('deckStack');
+const deckCount = document.getElementById('deckCount');
+const deckModal = document.getElementById('deckModal');
+const deckList = document.getElementById('deckList');
+const closeModal = document.getElementById('closeModal');
 
 function init() {
     loadStateFromUrl();
     renderAssetGrids();
     updateCanvas();
     setupEventListeners();
+    updateDeckUI();
+}
+
+function saveDeck() {
+    localStorage.setItem('uno_deck', JSON.stringify(state.deck));
+    updateDeckUI();
+}
+
+function updateDeckUI() {
+    const totalCards = state.deck.reduce((sum, item) => sum + item.quantity, 0);
+    deckCount.textContent = totalCards;
+    
+    deckStack.innerHTML = '';
+    const visualCards = Math.min(5, totalCards);
+    for (let i = 0; i < visualCards; i++) {
+        const img = document.createElement('img');
+        img.src = './assets/UNO_BACK_SIDE.png';
+        img.style.transform = `translateY(-${i * 4}px) translateX(${i * 2}px)`;
+        img.style.zIndex = i;
+        deckStack.appendChild(img);
+    }
 }
 
 function loadStateFromUrl() {
@@ -98,7 +125,6 @@ function updateUrl() {
 }
 
 function renderAssetGrids() {
-    // Backgrounds
     bgGrid.innerHTML = ASSETS.backgrounds.map(bg => `
         <button class="asset-item ${state.selectedBg.id === bg.id ? 'active' : ''}" data-type="bg" data-id="${bg.id}">
             <img src="${bg.path}" alt="${bg.name}" />
@@ -106,7 +132,6 @@ function renderAssetGrids() {
         </button>
     `).join('');
 
-    // Overlays
     overlayGrid.innerHTML = `
         <button class="asset-item ${!state.selectedOverlay ? 'active' : ''}" data-type="ov" data-id="none">
             <div class="empty-slot">None</div>
@@ -119,7 +144,6 @@ function renderAssetGrids() {
         </button>
     `).join('');
 
-    // Centers
     centerGrid.innerHTML = `
         <button class="asset-item ${!state.selectedCenter ? 'active' : ''}" data-type="ct" data-id="none">
             <div class="empty-slot">None</div>
@@ -147,41 +171,131 @@ function updateCanvas() {
             overlayImg.src = state.selectedOverlay.path;
             overlayImg.onload = () => {
                 ctx.drawImage(overlayImg, 0, 0);
-                drawCenter();
+                drawCenter(ctx, canvas.width, canvas.height, state.selectedCenter);
             };
         } else {
-            drawCenter();
+            drawCenter(ctx, canvas.width, canvas.height, state.selectedCenter);
         }
     };
 }
 
-function drawCenter() {
-    if (!state.selectedCenter) return;
+function drawCenter(targetCtx, width, height, centerAsset) {
+    if (!centerAsset) return;
     const centerImg = new Image();
-    centerImg.src = state.selectedCenter.path;
+    centerImg.src = centerAsset.path;
     centerImg.onload = () => {
-        const x = (canvas.width - centerImg.width) / 2;
-        const y = (canvas.height - centerImg.height) / 2;
-        ctx.drawImage(centerImg, x, y);
+        // Adding a 0.85 scale to the main card center for better aesthetics
+        const scale = 0.85;
+        const w = centerImg.width * scale;
+        const h = centerImg.height * scale;
+        const x = (width - w) / 2;
+        const y = (height - h) / 2;
+        targetCtx.drawImage(centerImg, x, y, w, h);
     };
 }
+
+function addToDeck() {
+    const cardId = [state.selectedBg.id, state.selectedOverlay?.id || 'none', state.selectedCenter?.id || 'none'].join('|');
+    const existingIndex = state.deck.findIndex(item => item.id === cardId);
+    
+    if (existingIndex > -1) {
+        state.deck[existingIndex].quantity++;
+    } else {
+        state.deck.push({
+            id: cardId,
+            bg: state.selectedBg,
+            ov: state.selectedOverlay,
+            ct: state.selectedCenter,
+            quantity: 1
+        });
+    }
+    saveDeck();
+}
+
+function renderDeckList() {
+    deckList.innerHTML = '';
+    if (state.deck.length === 0) {
+        deckList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #64748b;">Your deck is empty. Drag some cards here!</p>';
+        return;
+    }
+
+    state.deck.forEach((item, index) => {
+        const cardEl = document.createElement('div');
+        cardEl.className = 'deck-item';
+        cardEl.innerHTML = `
+            <div class="deck-item-preview">
+                <canvas width="120" height="180" id="deck-canvas-${index}"></canvas>
+            </div>
+            <div class="deck-item-controls">
+                <div class="quantity-control">
+                    <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                </div>
+                <button class="remove-btn" onclick="removeFromDeck(${index})">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </div>
+        `;
+        deckList.appendChild(cardEl);
+        
+        // Render thumbnail
+        const tCanvas = document.getElementById(`deck-canvas-${index}`);
+        const tCtx = tCanvas.getContext('2d');
+        const bgImg = new Image();
+        bgImg.src = item.bg.path;
+        bgImg.onload = () => {
+            tCtx.drawImage(bgImg, 0, 0, 120, 180);
+            if (item.ov) {
+                const ovImg = new Image();
+                ovImg.src = item.ov.path;
+                ovImg.onload = () => {
+                    tCtx.drawImage(ovImg, 0, 0, 120, 180);
+                    drawThumbnailCenter(tCtx, item.ct);
+                };
+            } else {
+                drawThumbnailCenter(tCtx, item.ct);
+            }
+        };
+    });
+}
+
+function drawThumbnailCenter(tCtx, centerAsset) {
+    if (!centerAsset) return;
+    const ctImg = new Image();
+    ctImg.src = centerAsset.path;
+    ctImg.onload = () => {
+        // Thumbnail is 120x180. Original background is ~400-600.
+        // Reducing scale further for the center image to ensure it fits better
+        const scale = 0.1;
+        const w = ctImg.width * scale;
+        const h = ctImg.height * scale;
+        tCtx.drawImage(ctImg, (120 - w) / 2, (180 - h) / 2, w, h);
+    };
+}
+
+window.updateQty = (index, delta) => {
+    state.deck[index].quantity += delta;
+    if (state.deck[index].quantity < 1) state.deck[index].quantity = 1;
+    saveDeck();
+    renderDeckList();
+};
+
+window.removeFromDeck = (index) => {
+    state.deck.splice(index, 1);
+    saveDeck();
+    renderDeckList();
+};
 
 function setupEventListeners() {
     document.addEventListener('click', (e) => {
         const item = e.target.closest('.asset-item');
         if (!item) return;
-
         const type = item.dataset.type;
         const id = item.dataset.id;
-
-        if (type === 'bg') {
-            state.selectedBg = ASSETS.backgrounds.find(b => b.id === id);
-        } else if (type === 'ov') {
-            state.selectedOverlay = id === 'none' ? null : ASSETS.overlays.find(o => o.id === id);
-        } else if (type === 'ct') {
-            state.selectedCenter = id === 'none' ? null : ASSETS.centers.find(c => c.id === id);
-        }
-
+        if (type === 'bg') state.selectedBg = ASSETS.backgrounds.find(b => b.id === id);
+        else if (type === 'ov') state.selectedOverlay = id === 'none' ? null : ASSETS.overlays.find(o => o.id === id);
+        else if (type === 'ct') state.selectedCenter = id === 'none' ? null : ASSETS.centers.find(c => c.id === id);
         renderAssetGrids();
         updateCanvas();
         updateUrl();
@@ -193,46 +307,52 @@ function setupEventListeners() {
             const bgName = state.selectedBg.id;
             const ctName = state.selectedCenter ? state.selectedCenter.id : 'empty';
             link.download = `uno_card_${bgName}_${ctName}.png`;
-            
-            const dataUrl = canvas.toDataURL('image/png');
-            link.href = dataUrl;
-            
+            link.href = canvas.toDataURL('image/png');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
-            console.log('Download triggered successfully');
         } catch (err) {
-            console.error('Error during download:', err);
-            alert('Could not download image. If you are opening the file directly (file://), your browser might be blocking this for security. Try running it from a local server or uploading to GitHub.');
+            alert('Security restriction: Cannot download from local file. Try hosting on GitHub.');
         }
     });
 
     shareBtn.addEventListener('click', async () => {
-        const shareData = {
-            title: 'UNO Card Sprite',
-            text: 'Check out this UNO card I created!',
-            url: window.location.href,
-        };
-
-        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                if (err.name !== 'AbortError') copyToClipboard();
-            }
-        } else {
-            copyToClipboard();
+        try {
+            await navigator.share({ title: 'UNO Card', url: window.location.href });
+        } catch (err) {
+            navigator.clipboard.writeText(window.location.href);
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
         }
     });
-}
 
-function copyToClipboard() {
-    navigator.clipboard.writeText(window.location.href);
-    toast.style.display = 'block';
-    setTimeout(() => {
-        toast.style.display = 'none';
-    }, 2000);
+    // Drag and Drop
+    canvas.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', 'uno-card');
+        canvas.style.opacity = '0.5';
+    });
+    canvas.addEventListener('dragend', () => canvas.style.opacity = '1');
+
+    deckContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        deckContainer.classList.add('drag-over');
+    });
+    deckContainer.addEventListener('dragleave', () => deckContainer.classList.remove('drag-over'));
+    deckContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        deckContainer.classList.remove('drag-over');
+        addToDeck();
+    });
+
+    // Modal
+    deckContainer.addEventListener('click', () => {
+        deckModal.style.display = 'flex';
+        renderDeckList();
+    });
+    closeModal.addEventListener('click', () => deckModal.style.display = 'none');
+    window.addEventListener('click', (e) => {
+        if (e.target === deckModal) deckModal.style.display = 'none';
+    });
 }
 
 init();

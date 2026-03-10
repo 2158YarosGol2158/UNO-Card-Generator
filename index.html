@@ -13,13 +13,14 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1>UNO Card Generator</h1>
+            <h1>UNO Card Generator | v2.0</h1>
         </header>
         
         <main class="app-main">
             <div class="preview-section">
-                <div class="canvas-wrapper premium-card">
-                    <canvas id="cardCanvas"></canvas>
+                <div class="canvas-wrapper premium-card" id="canvasWrapper">
+                    <canvas id="cardCanvas" draggable="true"></canvas>
+                    <div id="dragHint" class="drag-hint">Drag card to Deck</div>
                 </div>
                 <div class="action-bar">
                     <button id="downloadBtn" class="button">
@@ -27,11 +28,34 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     </button>
                     <button id="shareBtn" class="button secondary">
-                        <span>Share Link</span>
+                        <span>Share</span>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
                     </button>
                 </div>
+                
+                <div id="deckContainer" class="deck-container premium-card">
+                    <div class="deck-stack" id="deckStack">
+                        <!-- Back side cards will be here -->
+                    </div>
+                    <div class="deck-info">
+                        <span id="deckCount">0</span> cards in Deck
+                    </div>
+                </div>
+
                 <div id="toast" class="toast premium-card" style="display: none;">Link copied to clipboard!</div>
+            </div>
+
+            <!-- Deck Modal -->
+            <div id="deckModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content premium-card">
+                    <div class="modal-header">
+                        <h2>Your Custom Deck</h2>
+                        <button id="closeModal" class="close-button">&times;</button>
+                    </div>
+                    <div id="deckList" class="deck-list">
+                        <!-- Deck items will be injected here -->
+                    </div>
+                </div>
             </div>
 
             <div class="controls-section">
@@ -54,9 +78,8 @@
                 </div>
             </div>
         </main>
-
         <footer class="app-footer">
-            <p>UNO Card Generator | v1.5</p>
+            <p>UNO Card Generator | v2.0</p>
         </footer>
     </div>
     <script src="script.js"></script>
