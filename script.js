@@ -58,7 +58,6 @@ let state = {
     selectedCenter: null
 };
 
-// DOM Elements
 const canvas = document.getElementById('cardCanvas');
 const ctx = canvas.getContext('2d');
 const bgGrid = document.getElementById('bgGrid');
@@ -68,7 +67,6 @@ const downloadBtn = document.getElementById('downloadBtn');
 const shareBtn = document.getElementById('shareBtn');
 const toast = document.getElementById('toast');
 
-// Initialize
 function init() {
     loadStateFromUrl();
     renderAssetGrids();
@@ -194,11 +192,9 @@ function setupEventListeners() {
             const ctName = state.selectedCenter ? state.selectedCenter.id : 'empty';
             link.download = `uno_card_${bgName}_${ctName}.png`;
             
-            // Generate the image data
             const dataUrl = canvas.toDataURL('image/png');
             link.href = dataUrl;
             
-            // For better compatibility (especially in Firefox/Safari), append to body
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -237,5 +233,4 @@ function copyToClipboard() {
     }, 2000);
 }
 
-// Inicia la aplicación
 init();
