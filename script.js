@@ -59,6 +59,7 @@ let state = {
     selectedCenter: null
 };
 
+
 const canvas = document.getElementById('cardCanvas');
 const ctx = canvas.getContext('2d');
 const bgGrid = document.getElementById('bgGrid');
