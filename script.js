@@ -80,6 +80,7 @@ const deckCount = document.getElementById('deckCount');
 const deckModal = document.getElementById('deckModal');
 const deckList = document.getElementById('deckList');
 const closeModal = document.getElementById('closeModal');
+const exportPdfBtn = document.getElementById('exportPdfBtn');
 
 function init() {
     loadStateFromUrl();
@@ -316,6 +317,110 @@ window.removeFromDeck = (index) => {
     renderDeckList();
 };
 
+async function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const cardW = 59;
+    const cardH = 93;
+    const gap = 2;
+    const columns = 3;
+    const rows = 3;
+    const marginX = (pageWidth - (cardW * columns + gap * (columns - 1))) / 2;
+    const marginY = (pageHeight - (cardH * rows + gap * (rows - 1))) / 2;
+
+    let currentX = marginX;
+    let currentY = marginY;
+    let col = 0;
+    let row = 0;
+    let isFirstPage = true;
+
+    // Show loading state
+    const originalText = exportPdfBtn.innerHTML;
+    exportPdfBtn.innerText = 'Generating...';
+    exportPdfBtn.disabled = true;
+
+    try {
+        for (const item of state.deck) {
+            const cardImgData = await renderHighResCard(item);
+            
+            for (let i = 0; i < item.quantity; i++) {
+                if (!isFirstPage && col === 0 && row === 0) {
+                    doc.addPage();
+                }
+                isFirstPage = false;
+
+                doc.addImage(cardImgData, 'PNG', currentX, currentY, cardW, cardH);
+
+                col++;
+                if (col >= columns) {
+                    col = 0;
+                    row++;
+                    currentX = marginX;
+                    currentY += cardH + gap;
+                } else {
+                    currentX += cardW + gap;
+                }
+
+                if (row >= rows) {
+                    row = 0;
+                    currentY = marginY;
+                }
+            }
+        }
+        doc.save('uno_deck_print.pdf');
+    } catch (err) {
+        console.error(err);
+        alert('Error generating PDF. Check console for details.');
+    } finally {
+        exportPdfBtn.innerHTML = originalText;
+        exportPdfBtn.disabled = false;
+    }
+}
+
+async function renderHighResCard(item) {
+    const tempCanvas = document.createElement('canvas');
+    const tCtx = tempCanvas.getContext('2d');
+    
+    // 300 DPI for 59x93mm is ~697x1098px
+    tempCanvas.width = 697;
+    tempCanvas.height = 1098;
+
+    const bgImg = await loadImage(item.bg.path);
+    tCtx.drawImage(bgImg, 0, 0, 697, 1098);
+
+    if (item.ov) {
+        const ovImg = await loadImage(item.ov.path);
+        tCtx.drawImage(ovImg, 0, 0, 697, 1098);
+    }
+
+    if (item.ct) {
+        const ctImg = await loadImage(item.ct.path);
+        const scale = 0.85;
+        const w = ctImg.width * scale * (697 / 400); // Scale relative to original design ratio
+        const h = ctImg.height * scale * (1098 / 600);
+        
+        // Ensure we fit correctly
+        const fitScale = Math.min(600 / ctImg.width, 940 / ctImg.height) * 0.85;
+        const finalW = ctImg.width * fitScale;
+        const finalH = ctImg.height * fitScale;
+        
+        tCtx.drawImage(ctImg, (697 - finalW) / 2, (1098 - finalH) / 2, finalW, finalH);
+    }
+
+    return tempCanvas.toDataURL('image/png');
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+
 function setupEventListeners() {
     document.addEventListener('click', (e) => {
         const item = e.target.closest('.asset-item');
@@ -394,6 +499,7 @@ function setupEventListeners() {
         renderDeckList();
     });
     closeModal.addEventListener('click', () => deckModal.style.display = 'none');
+    exportPdfBtn.addEventListener('click', exportToPDF);
     window.addEventListener('click', (e) => {
         if (e.target === deckModal) deckModal.style.display = 'none';
     });
