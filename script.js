@@ -1,60 +1,65 @@
 const ASSETS = {
-  backgrounds: [
-    { id: 'black', name: 'Black', path: './assets/FIRST_LEVEL/UNO_BLACK.png' },
-    { id: 'blue', name: 'Blue', path: './assets/FIRST_LEVEL/UNO_BLUE.png' },
-    { id: 'green', name: 'Green', path: './assets/FIRST_LEVEL/UNO_GREEN.png' },
-    { id: 'red', name: 'Red', path: './assets/FIRST_LEVEL/UNO_RED.png' },
-    { id: 'wild', name: 'Wild', path: './assets/FIRST_LEVEL/UNO_WILD.png' },
-    { id: 'yellow', name: 'Yellow', path: './assets/FIRST_LEVEL/UNO_YELLOW.png' },
-    { id: 'premium', name: 'Premium', path: './assets/FIRST_LEVEL/UNO_PREMIUM.png' }
-  ],
-  overlays: [
-    { id: '4color', name: '4 Color Corner', path: './assets/SECOND_LEVEL/UNO_4COLOR.png' },
-    { id: 'n0', name: 'Number 0', path: './assets/SECOND_LEVEL/UNO_NUMBER_0.png' },
-    { id: 'n1', name: 'Number 1', path: './assets/SECOND_LEVEL/UNO_NUMBER_1.png' },
-    { id: 'n2', name: 'Number 2', path: './assets/SECOND_LEVEL/UNO_NUMBER_2.png' },
-    { id: 'n3', name: 'Number 3', path: './assets/SECOND_LEVEL/UNO_NUMBER_3.png' },
-    { id: 'n4', name: 'Number 4', path: './assets/SECOND_LEVEL/UNO_NUMBER_4.png' },
-    { id: 'n5', name: 'Number 5', path: './assets/SECOND_LEVEL/UNO_NUMBER_5.png' },
-    { id: 'n6', name: 'Number 6', path: './assets/SECOND_LEVEL/UNO_NUMBER_6.png' },
-    { id: 'n7', name: 'Number 7', path: './assets/SECOND_LEVEL/UNO_NUMBER_7.png' },
-    { id: 'n8', name: 'Number 8', path: './assets/SECOND_LEVEL/UNO_NUMBER_8.png' },
-    { id: 'n9', name: 'Number 9', path: './assets/SECOND_LEVEL/UNO_NUMBER_9.png' },
-    { id: 'n+2', name: 'Number +2', path: './assets/SECOND_LEVEL/UNO_NUMBER_+2.png' },
-    { id: 'n+4', name: 'Number +4', path: './assets/SECOND_LEVEL/UNO_NUMBER_+4.png' },
-    { id: 'skip', name: 'Skip', path: './assets/SECOND_LEVEL/UNO_SKIP.png' },
-    { id: 'reverse', name: 'Reverse', path: './assets/SECOND_LEVEL/UNO_REVERSE.png' },
-    { id: '2skips', name: '2 Skips', path: './assets/SECOND_LEVEL/UNO_2SKIPS.png' },
-    { id: '2cubes', name: '2 Cubes', path: './assets/SECOND_LEVEL/UNO_2CUBES.png' },
-    { id: 'aim', name: 'Aim',  path: './assets/SECOND_LEVEL/UNO_AIM.png' },
-  ],
-  centers: [
-    { id: '2cards', name: '+2 Cards', path: './assets/THIRD_LEVEL/UNO_2CARDS.png' },
-    { id: 'n0', name: 'Number 0', path: './assets/THIRD_LEVEL/UNO_NUMBER_0.png' },
-    { id: 'n1', name: 'Number 1', path: './assets/THIRD_LEVEL/UNO_NUMBER_1.png' },
-    { id: 'n2', name: 'Number 2', path: './assets/THIRD_LEVEL/UNO_NUMBER_2.png' },
-    { id: 'n3', name: 'Number 3', path: './assets/THIRD_LEVEL/UNO_NUMBER_3.png' },
-    { id: 'n4', name: 'Number 4', path: './assets/THIRD_LEVEL/UNO_NUMBER_4.png' },
-    { id: 'n5', name: 'Number 5', path: './assets/THIRD_LEVEL/UNO_NUMBER_5.png' },
-    { id: 'n6', name: 'Number 6', path: './assets/THIRD_LEVEL/UNO_NUMBER_6.png' },
-    { id: 'n7', name: 'Number 7', path: './assets/THIRD_LEVEL/UNO_NUMBER_7.png' },
-    { id: 'n8', name: 'Number 8', path: './assets/THIRD_LEVEL/UNO_NUMBER_8.png' },
-    { id: 'n9', name: 'Number 9', path: './assets/THIRD_LEVEL/UNO_NUMBER_9.png' },
-    { id: '4cards', name: '4 Cards', path: './assets/THIRD_LEVEL/UNO_4CARDS.png' },
-    { id: 'skip', name: 'Skip', path: './assets/THIRD_LEVEL/UNO_SKIP.png' },
-    { id: 'reverse', name: 'Reverse', path: './assets/THIRD_LEVEL/UNO_REVERSE.png' },
-    { id: '2cubes', name: '2 Cubes', path: './assets/THIRD_LEVEL/UNO_2CUBES.png' },
-    { id: '2skips', name: '2 Skips', path: './assets/THIRD_LEVEL/UNO_2SKIPS.png' },
-    { id: 'aim', name: 'Aim',  path: './assets/THIRD_LEVEL/UNO_AIM.png' },
-    { id: 'n+4', name: '+4 Cards',  path: './assets/THIRD_LEVEL/UNO_NUMBER_+4.png' },
-    { id: 'color', name: 'Color Change',  path: './assets/THIRD_LEVEL/UNO_COLOR_CHANGE.png' },
-    { id: 'uno', name: 'UNO',  path: './assets/THIRD_LEVEL/UNO_UNO.png' },
-    { id: 'w4cards', name: 'White 4 Cards', path: './assets/THIRD_LEVEL/UNO_WHITE_4CARDS.png' },
-  ]
+  default: {
+    name: 'Default',
+    back: './assets/default/UNO_BACK_SIDE.png',
+    backgrounds: [
+      { id: 'black', name: 'Black', path: './assets/default/backgrounds/UNO_BLACK.png' },
+      { id: 'blue', name: 'Blue', path: './assets/default/backgrounds/UNO_BLUE.png' },
+      { id: 'green', name: 'Green', path: './assets/default/backgrounds/UNO_GREEN.png' },
+      { id: 'red', name: 'Red', path: './assets/default/backgrounds/UNO_RED.png' },
+      { id: 'wild', name: 'Wild', path: './assets/default/backgrounds/UNO_WILD.png' },
+      { id: 'yellow', name: 'Yellow', path: './assets/default/backgrounds/UNO_YELLOW.png' },
+      { id: 'premium', name: 'Premium', path: './assets/default/backgrounds/UNO_PREMIUM.png' }
+    ],
+    overlays: [
+      { id: '4color', name: '4 Color Corner', path: './assets/default/overlays/UNO_4COLOR.png' },
+      { id: 'n0', name: 'Number 0', path: './assets/default/overlays/UNO_NUMBER_0.png' },
+      { id: 'n1', name: 'Number 1', path: './assets/default/overlays/UNO_NUMBER_1.png' },
+      { id: 'n2', name: 'Number 2', path: './assets/default/overlays/UNO_NUMBER_2.png' },
+      { id: 'n3', name: 'Number 3', path: './assets/default/overlays/UNO_NUMBER_3.png' },
+      { id: 'n4', name: 'Number 4', path: './assets/default/overlays/UNO_NUMBER_4.png' },
+      { id: 'n5', name: 'Number 5', path: './assets/default/overlays/UNO_NUMBER_5.png' },
+      { id: 'n6', name: 'Number 6', path: './assets/default/overlays/UNO_NUMBER_6.png' },
+      { id: 'n7', name: 'Number 7', path: './assets/default/overlays/UNO_NUMBER_7.png' },
+      { id: 'n8', name: 'Number 8', path: './assets/default/overlays/UNO_NUMBER_8.png' },
+      { id: 'n9', name: 'Number 9', path: './assets/default/overlays/UNO_NUMBER_9.png' },
+      { id: 'n+2', name: 'Number +2', path: './assets/default/overlays/UNO_NUMBER_+2.png' },
+      { id: 'n+4', name: 'Number +4', path: './assets/default/overlays/UNO_NUMBER_+4.png' },
+      { id: 'skip', name: 'Skip', path: './assets/default/overlays/UNO_SKIP.png' },
+      { id: 'reverse', name: 'Reverse', path: './assets/default/overlays/UNO_REVERSE.png' },
+      { id: '2skips', name: '2 Skips', path: './assets/default/overlays/UNO_2SKIPS.png' },
+      { id: '2cubes', name: '2 Cubes', path: './assets/default/overlays/UNO_2CUBES.png' },
+      { id: 'aim', name: 'Aim',  path: './assets/default/overlays/UNO_AIM.png' },
+    ],
+    centers: [
+      { id: '2cards', name: '+2 Cards', path: './assets/default/centers/UNO_2CARDS.png' },
+      { id: 'n0', name: 'Number 0', path: './assets/default/centers/UNO_NUMBER_0.png' },
+      { id: 'n1', name: 'Number 1', path: './assets/default/centers/UNO_NUMBER_1.png' },
+      { id: 'n2', name: 'Number 2', path: './assets/default/centers/UNO_NUMBER_2.png' },
+      { id: 'n3', name: 'Number 3', path: './assets/default/centers/UNO_NUMBER_3.png' },
+      { id: 'n4', name: 'Number 4', path: './assets/default/centers/UNO_NUMBER_4.png' },
+      { id: 'n5', name: 'Number 5', path: './assets/default/centers/UNO_NUMBER_5.png' },
+      { id: 'n6', name: 'Number 6', path: './assets/default/centers/UNO_NUMBER_6.png' },
+      { id: 'n7', name: 'Number 7', path: './assets/default/centers/UNO_NUMBER_7.png' },
+      { id: 'n8', name: 'Number 8', path: './assets/default/centers/UNO_NUMBER_8.png' },
+      { id: 'n9', name: 'Number 9', path: './assets/default/centers/UNO_NUMBER_9.png' },
+      { id: '4cards', name: '4 Cards', path: './assets/default/centers/UNO_4CARDS.png' },
+      { id: 'skip', name: 'Skip', path: './assets/default/centers/UNO_SKIP.png' },
+      { id: 'reverse', name: 'Reverse', path: './assets/default/centers/UNO_REVERSE.png' },
+      { id: '2cubes', name: '2 Cubes', path: './assets/default/centers/UNO_2CUBES.png' },
+      { id: '2skips', name: '2 Skips', path: './assets/default/centers/UNO_2SKIPS.png' },
+      { id: 'aim', name: 'Aim',  path: './assets/default/centers/UNO_AIM.png' },
+      { id: 'n+4', name: '+4 Cards',  path: './assets/default/centers/UNO_NUMBER_+4.png' },
+      { id: 'color', name: 'Color Change',  path: './assets/default/centers/UNO_COLOR_CHANGE.png' },
+      { id: 'uno', name: 'UNO',  path: './assets/default/centers/UNO_UNO.png' },
+      { id: 'w4cards', name: 'White 4 Cards', path: './assets/default/centers/UNO_WHITE_4CARDS.png' },
+    ]
+  }
 };
 
 let state = {
-    selectedBg: ASSETS.backgrounds[0],
+    selectedStyle: 'default',
+    selectedBg: ASSETS.default.backgrounds[0],
     selectedOverlay: null,
     selectedCenter: null,
     deck: JSON.parse(localStorage.getItem('uno_deck')) || []
@@ -62,6 +67,7 @@ let state = {
 
 const canvas = document.getElementById('cardCanvas');
 const ctx = canvas.getContext('2d');
+const styleGrid = document.getElementById('styleGrid');
 const bgGrid = document.getElementById('bgGrid');
 const overlayGrid = document.getElementById('overlayGrid');
 const centerGrid = document.getElementById('centerGrid');
@@ -77,6 +83,7 @@ const closeModal = document.getElementById('closeModal');
 
 function init() {
     loadStateFromUrl();
+    renderStyleGrid();
     renderAssetGrids();
     updateCanvas();
     setupEventListeners();
@@ -94,9 +101,10 @@ function updateDeckUI() {
     
     deckStack.innerHTML = '';
     const visualCards = Math.min(5, totalCards);
+    const styleBack = ASSETS[state.selectedStyle].back;
     for (let i = 0; i < visualCards; i++) {
         const img = document.createElement('img');
-        img.src = './assets/UNO_BACK_SIDE.png';
+        img.src = styleBack;
         img.style.transform = `translateY(-${i * 4}px) translateX(${i * 2}px)`;
         img.style.zIndex = i;
         deckStack.appendChild(img);
@@ -105,17 +113,25 @@ function updateDeckUI() {
 
 function loadStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
+    const stId = params.get('st');
     const bgId = params.get('bg');
     const ovId = params.get('ov');
     const ctId = params.get('ct');
 
-    if (bgId) state.selectedBg = ASSETS.backgrounds.find(b => b.id === bgId) || ASSETS.backgrounds[0];
-    if (ovId) state.selectedOverlay = ASSETS.overlays.find(o => o.id === ovId) || null;
-    if (ctId) state.selectedCenter = ASSETS.centers.find(c => c.id === ctId) || null;
+    if (stId && ASSETS[stId]) state.selectedStyle = stId;
+    
+    const currentAssets = ASSETS[state.selectedStyle];
+
+    if (bgId) state.selectedBg = currentAssets.backgrounds.find(b => b.id === bgId) || currentAssets.backgrounds[0];
+    else state.selectedBg = currentAssets.backgrounds[0];
+
+    if (ovId) state.selectedOverlay = currentAssets.overlays.find(o => o.id === ovId) || null;
+    if (ctId) state.selectedCenter = currentAssets.centers.find(c => c.id === ctId) || null;
 }
 
 function updateUrl() {
     const params = new URLSearchParams();
+    params.set('st', state.selectedStyle);
     params.set('bg', state.selectedBg.id);
     if (state.selectedOverlay) params.set('ov', state.selectedOverlay.id);
     if (state.selectedCenter) params.set('ct', state.selectedCenter.id);
@@ -124,8 +140,19 @@ function updateUrl() {
     window.history.replaceState({}, '', newUrl);
 }
 
+function renderStyleGrid() {
+    styleGrid.innerHTML = Object.keys(ASSETS).map(stKey => `
+        <button class="asset-item ${state.selectedStyle === stKey ? 'active' : ''}" data-type="st" data-id="${stKey}">
+            <img src="${ASSETS[stKey].back}" alt="${ASSETS[stKey].name}" style="transform: scale(0.8);" />
+            <span>${ASSETS[stKey].name}</span>
+        </button>
+    `).join('');
+}
+
 function renderAssetGrids() {
-    bgGrid.innerHTML = ASSETS.backgrounds.map(bg => `
+    const currentAssets = ASSETS[state.selectedStyle];
+
+    bgGrid.innerHTML = currentAssets.backgrounds.map(bg => `
         <button class="asset-item ${state.selectedBg.id === bg.id ? 'active' : ''}" data-type="bg" data-id="${bg.id}">
             <img src="${bg.path}" alt="${bg.name}" />
             <span>${bg.name}</span>
@@ -137,7 +164,7 @@ function renderAssetGrids() {
             <div class="empty-slot">None</div>
             <span>None</span>
         </button>
-    ` + ASSETS.overlays.map(ov => `
+    ` + currentAssets.overlays.map(ov => `
         <button class="asset-item ${state.selectedOverlay?.id === ov.id ? 'active' : ''}" data-type="ov" data-id="${ov.id}">
             <img src="${ov.path}" alt="${ov.name}" />
             <span>${ov.name}</span>
@@ -149,7 +176,7 @@ function renderAssetGrids() {
             <div class="empty-slot">None</div>
             <span>None</span>
         </button>
-    ` + ASSETS.centers.map(ct => `
+    ` + currentAssets.centers.map(ct => `
         <button class="asset-item ${state.selectedCenter?.id === ct.id ? 'active' : ''}" data-type="ct" data-id="${ct.id}">
             <img src="${ct.path}" alt="${ct.name}" />
             <span>${ct.name}</span>
@@ -195,7 +222,7 @@ function drawCenter(targetCtx, width, height, centerAsset) {
 }
 
 function addToDeck() {
-    const cardId = [state.selectedBg.id, state.selectedOverlay?.id || 'none', state.selectedCenter?.id || 'none'].join('|');
+    const cardId = [state.selectedStyle, state.selectedBg.id, state.selectedOverlay?.id || 'none', state.selectedCenter?.id || 'none'].join('|');
     const existingIndex = state.deck.findIndex(item => item.id === cardId);
     
     if (existingIndex > -1) {
@@ -203,6 +230,8 @@ function addToDeck() {
     } else {
         state.deck.push({
             id: cardId,
+            style: state.selectedStyle,
+            styleBack: ASSETS[state.selectedStyle].back,
             bg: state.selectedBg,
             ov: state.selectedOverlay,
             ct: state.selectedCenter,
@@ -293,9 +322,24 @@ function setupEventListeners() {
         if (!item) return;
         const type = item.dataset.type;
         const id = item.dataset.id;
-        if (type === 'bg') state.selectedBg = ASSETS.backgrounds.find(b => b.id === id);
-        else if (type === 'ov') state.selectedOverlay = id === 'none' ? null : ASSETS.overlays.find(o => o.id === id);
-        else if (type === 'ct') state.selectedCenter = id === 'none' ? null : ASSETS.centers.find(c => c.id === id);
+        
+        const currentAssets = ASSETS[state.selectedStyle];
+
+        if (type === 'st') {
+            state.selectedStyle = id;
+            // When style changes, try to keep the same asset IDs if they exist in the new style
+            const newAssets = ASSETS[state.selectedStyle];
+            state.selectedBg = newAssets.backgrounds.find(b => b.id === state.selectedBg.id) || newAssets.backgrounds[0];
+            if (state.selectedOverlay) state.selectedOverlay = newAssets.overlays.find(o => o.id === state.selectedOverlay.id) || null;
+            if (state.selectedCenter) state.selectedCenter = newAssets.centers.find(c => c.id === state.selectedCenter.id) || null;
+            
+            renderStyleGrid();
+            updateDeckUI(); // Back side might change
+        }
+        else if (type === 'bg') state.selectedBg = ASSETS[state.selectedStyle].backgrounds.find(b => b.id === id);
+        else if (type === 'ov') state.selectedOverlay = id === 'none' ? null : ASSETS[state.selectedStyle].overlays.find(o => o.id === id);
+        else if (type === 'ct') state.selectedCenter = id === 'none' ? null : ASSETS[state.selectedStyle].centers.find(c => c.id === id);
+        
         renderAssetGrids();
         updateCanvas();
         updateUrl();
