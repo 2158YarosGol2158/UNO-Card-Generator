@@ -84,6 +84,7 @@ const exportPdfBtn = document.getElementById('exportPdfBtn');
 
 function init() {
     loadStateFromUrl();
+    migrateDeck(); // Ensure old deck formats are updated
     renderStyleGrid();
     renderAssetGrids();
     updateCanvas();
@@ -94,6 +95,51 @@ function init() {
 function saveDeck() {
     localStorage.setItem('uno_deck', JSON.stringify(state.deck));
     updateDeckUI();
+}
+
+function migrateDeck() {
+    let migrated = false;
+    
+    state.deck = state.deck.map(item => {
+        // Signs of an old format item:
+        // 1. Missing style property
+        // 2. Old path format (not including 'default' in the asset path)
+        const isOldPath = item.bg.path.includes('./assets/backgrounds/');
+        const isOldId = item.id.split('|').length < 4;
+        
+        if (!item.style || isOldPath || isOldId) {
+            migrated = true;
+            const styleId = 'default';
+            const currentStyleAssets = ASSETS[styleId];
+            
+            // Extract IDs from old format
+            const bgId = item.bg.id;
+            const ovId = item.ov?.id || 'none';
+            const ctId = item.ct?.id || 'none';
+            
+            // Find corrected asset objects from current ASSETS to ensure paths are updated
+            const newBg = currentStyleAssets.backgrounds.find(b => b.id === bgId) || currentStyleAssets.backgrounds[0];
+            const newOv = ovId === 'none' ? null : currentStyleAssets.overlays.find(o => o.id === ovId);
+            const newCt = ctId === 'none' ? null : currentStyleAssets.centers.find(c => c.id === ctId);
+            
+            // Rebuild item in new format
+            return {
+                id: [styleId, bgId, ovId, ctId].join('|'),
+                style: styleId,
+                styleBack: currentStyleAssets.back,
+                bg: newBg,
+                ov: newOv,
+                ct: newCt,
+                quantity: item.quantity || 1
+            };
+        }
+        return item;
+    });
+    
+    if (migrated) {
+        saveDeck();
+        console.log('Deck migrated to current format');
+    }
 }
 
 function updateDeckUI() {
