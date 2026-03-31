@@ -13,46 +13,25 @@ const ASSETS = {
     ],
     overlays: [
       { id: '4color', name: '4 Color Corner', path: './assets/default/overlays/UNO_4COLOR.png' },
-      { id: 'n0', name: 'Number 0', path: './assets/default/overlays/UNO_NUMBER_0.png' },
-      { id: 'n1', name: 'Number 1', path: './assets/default/overlays/UNO_NUMBER_1.png' },
-      { id: 'n2', name: 'Number 2', path: './assets/default/overlays/UNO_NUMBER_2.png' },
-      { id: 'n3', name: 'Number 3', path: './assets/default/overlays/UNO_NUMBER_3.png' },
-      { id: 'n4', name: 'Number 4', path: './assets/default/overlays/UNO_NUMBER_4.png' },
-      { id: 'n5', name: 'Number 5', path: './assets/default/overlays/UNO_NUMBER_5.png' },
-      { id: 'n6', name: 'Number 6', path: './assets/default/overlays/UNO_NUMBER_6.png' },
-      { id: 'n7', name: 'Number 7', path: './assets/default/overlays/UNO_NUMBER_7.png' },
-      { id: 'n8', name: 'Number 8', path: './assets/default/overlays/UNO_NUMBER_8.png' },
-      { id: 'n9', name: 'Number 9', path: './assets/default/overlays/UNO_NUMBER_9.png' },
-      { id: 'n+2', name: 'Number +2', path: './assets/default/overlays/UNO_NUMBER_+2.png' },
-      { id: 'n+4', name: 'Number +4', path: './assets/default/overlays/UNO_NUMBER_+4.png' },
       { id: 'skip', name: 'Skip', path: './assets/default/overlays/UNO_SKIP.png' },
       { id: 'reverse', name: 'Reverse', path: './assets/default/overlays/UNO_REVERSE.png' },
       { id: '2skips', name: '2 Skips', path: './assets/default/overlays/UNO_2SKIPS.png' },
       { id: '2cubes', name: '2 Cubes', path: './assets/default/overlays/UNO_2CUBES.png' },
       { id: 'aim', name: 'Aim',  path: './assets/default/overlays/UNO_AIM.png' },
+      { id: 'text', name: 'Custom Text', type: 'text' }
     ],
     centers: [
       { id: '2cards', name: '+2 Cards', path: './assets/default/centers/UNO_2CARDS.png' },
-      { id: 'n0', name: 'Number 0', path: './assets/default/centers/UNO_NUMBER_0.png' },
-      { id: 'n1', name: 'Number 1', path: './assets/default/centers/UNO_NUMBER_1.png' },
-      { id: 'n2', name: 'Number 2', path: './assets/default/centers/UNO_NUMBER_2.png' },
-      { id: 'n3', name: 'Number 3', path: './assets/default/centers/UNO_NUMBER_3.png' },
-      { id: 'n4', name: 'Number 4', path: './assets/default/centers/UNO_NUMBER_4.png' },
-      { id: 'n5', name: 'Number 5', path: './assets/default/centers/UNO_NUMBER_5.png' },
-      { id: 'n6', name: 'Number 6', path: './assets/default/centers/UNO_NUMBER_6.png' },
-      { id: 'n7', name: 'Number 7', path: './assets/default/centers/UNO_NUMBER_7.png' },
-      { id: 'n8', name: 'Number 8', path: './assets/default/centers/UNO_NUMBER_8.png' },
-      { id: 'n9', name: 'Number 9', path: './assets/default/centers/UNO_NUMBER_9.png' },
       { id: '4cards', name: '4 Cards', path: './assets/default/centers/UNO_4CARDS.png' },
       { id: 'skip', name: 'Skip', path: './assets/default/centers/UNO_SKIP.png' },
       { id: 'reverse', name: 'Reverse', path: './assets/default/centers/UNO_REVERSE.png' },
       { id: '2cubes', name: '2 Cubes', path: './assets/default/centers/UNO_2CUBES.png' },
       { id: '2skips', name: '2 Skips', path: './assets/default/centers/UNO_2SKIPS.png' },
       { id: 'aim', name: 'Aim',  path: './assets/default/centers/UNO_AIM.png' },
-      { id: 'n+4', name: '+4 Cards',  path: './assets/default/centers/UNO_NUMBER_+4.png' },
       { id: 'color', name: 'Color Change',  path: './assets/default/centers/UNO_COLOR_CHANGE.png' },
       { id: 'uno', name: 'UNO',  path: './assets/default/centers/UNO_UNO.png' },
       { id: 'w4cards', name: 'White 4 Cards', path: './assets/default/centers/UNO_WHITE_4CARDS.png' },
+      { id: 'text', name: 'Custom Text', type: 'text' }
     ]
   }
 };
@@ -62,6 +41,8 @@ let state = {
     selectedBg: ASSETS.default.backgrounds[0],
     selectedOverlay: null,
     selectedCenter: null,
+    overlayText: '',
+    centerText: '',
     deck: JSON.parse(localStorage.getItem('uno_deck')) || []
 };
 
@@ -164,6 +145,8 @@ function loadStateFromUrl() {
     const bgId = params.get('bg');
     const ovId = params.get('ov');
     const ctId = params.get('ct');
+    const ovText = params.get('ot');
+    const ctText = params.get('ctt');
 
     if (stId && ASSETS[stId]) state.selectedStyle = stId;
     
@@ -174,6 +157,9 @@ function loadStateFromUrl() {
 
     if (ovId) state.selectedOverlay = currentAssets.overlays.find(o => o.id === ovId) || null;
     if (ctId) state.selectedCenter = currentAssets.centers.find(c => c.id === ctId) || null;
+    
+    if (ovText) state.overlayText = ovText;
+    if (ctText) state.centerText = ctText;
 }
 
 function updateUrl() {
@@ -182,6 +168,8 @@ function updateUrl() {
     params.set('bg', state.selectedBg.id);
     if (state.selectedOverlay) params.set('ov', state.selectedOverlay.id);
     if (state.selectedCenter) params.set('ct', state.selectedCenter.id);
+    if (state.overlayText) params.set('ot', state.overlayText);
+    if (state.centerText) params.set('ctt', state.centerText);
     
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, '', newUrl);
@@ -213,7 +201,7 @@ function renderAssetGrids() {
         </button>
     ` + currentAssets.overlays.map(ov => `
         <button class="asset-item ${state.selectedOverlay?.id === ov.id ? 'active' : ''}" data-type="ov" data-id="${ov.id}">
-            <img src="${ov.path}" alt="${ov.name}" />
+            ${ov.type === 'text' ? '<div class="empty-slot" style="font-family: Cabin; font-weight: bold; font-size: 2rem;">T</div>' : `<img src="${ov.path}" alt="${ov.name}" />`}
             <span>${ov.name}</span>
         </button>
     `).join('');
@@ -225,7 +213,7 @@ function renderAssetGrids() {
         </button>
     ` + currentAssets.centers.map(ct => `
         <button class="asset-item ${state.selectedCenter?.id === ct.id ? 'active' : ''}" data-type="ct" data-id="${ct.id}">
-            <img src="${ct.path}" alt="${ct.name}" />
+            ${ct.type === 'text' ? '<div class="empty-slot" style="font-family: Cabin; font-weight: bold; font-size: 2rem;">T</div>' : `<img src="${ct.path}" alt="${ct.name}" />`}
             <span>${ct.name}</span>
         </button>
     `).join('');
@@ -241,31 +229,121 @@ function updateCanvas() {
         ctx.drawImage(bgImg, 0, 0);
 
         if (state.selectedOverlay) {
-            const overlayImg = new Image();
-            overlayImg.src = state.selectedOverlay.path;
-            overlayImg.onload = () => {
-                ctx.drawImage(overlayImg, 0, 0);
-                drawCenter(ctx, canvas.width, canvas.height, state.selectedCenter);
-            };
+            if (state.selectedOverlay.type === 'text') {
+                drawTextOverlay(ctx, canvas.width, canvas.height, state.overlayText);
+                drawNext();
+            } else {
+                const overlayImg = new Image();
+                overlayImg.src = state.selectedOverlay.path;
+                overlayImg.onload = () => {
+                    ctx.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
+                    drawNext();
+                };
+            }
         } else {
-            drawCenter(ctx, canvas.width, canvas.height, state.selectedCenter);
+            drawNext();
+        }
+
+        function drawNext() {
+            if (state.selectedCenter) {
+                if (state.selectedCenter.type === 'text') {
+                    drawTextCenter(ctx, canvas.width, canvas.height, state.centerText);
+                } else {
+                    const centerImg = new Image();
+                    centerImg.src = state.selectedCenter.path;
+                    centerImg.onload = () => {
+                        const scale = 0.85;
+                        const w = centerImg.width * scale;
+                        const h = centerImg.height * scale;
+                        ctx.drawImage(centerImg, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+                    };
+                }
+            }
         }
     };
 }
 
-function drawCenter(targetCtx, width, height, centerAsset) {
-    if (!centerAsset) return;
-    const centerImg = new Image();
-    centerImg.src = centerAsset.path;
-    centerImg.onload = () => {
-        // Adding a 0.85 scale to the main card center for better aesthetics
-        const scale = 0.85;
-        const w = centerImg.width * scale;
-        const h = centerImg.height * scale;
-        const x = (width - w) / 2;
-        const y = (height - h) / 2;
-        targetCtx.drawImage(centerImg, x, y, w, h);
-    };
+function drawTextOverlay(context, width, height, text) {
+    if (!text) return;
+    context.fillStyle = 'white';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    
+    // Base font size
+    let fontSize = height * 0.12;
+    context.font = `700 ${fontSize}px Cabin`;
+    
+    // Dynamic resizing for longer text
+    const maxCornerWidth = width * 0.22;
+    const textMetrics = context.measureText(text);
+    if (textMetrics.width > maxCornerWidth) {
+        fontSize = fontSize * (maxCornerWidth / textMetrics.width);
+        context.font = `700 ${fontSize}px Cabin`;
+    }
+
+    context.strokeStyle = 'black';
+    context.lineWidth = fontSize * 0.1;
+    context.lineJoin = 'round';
+    context.shadowColor = 'black';
+    context.shadowBlur = fontSize * 0.1;
+    context.shadowOffsetX = fontSize * 0.05;
+    context.shadowOffsetY = fontSize * 0.05;
+    
+    // Base position
+    let posX = width * 0.15;
+    let posY = height * 0.12;
+    
+    // Shift position slightly for longer text to avoid edge clipping
+    if (text.length > 2) {
+        posX = width * 0.17;
+    }
+
+    // Top Left
+    context.save();
+    context.translate(posX, posY);
+    context.strokeText(text, 0, 0);
+    context.fillText(text, 0, 0);
+    context.restore();
+    
+    // Bottom Right (Mirrored)
+    context.save();
+    context.translate(width - posX, height - posY);
+    context.rotate(Math.PI);
+    context.strokeText(text, 0, 0);
+    context.fillText(text, 0, 0);
+    context.restore();
+    
+    // Reset shadow
+    context.shadowColor = 'transparent';
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+}
+
+function drawTextCenter(context, width, height, text) {
+    if (!text) return;
+    context.fillStyle = 'white';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    const fontSize = height * 0.35; // Reduced from 0.45
+    context.font = `700 ${fontSize}px Cabin`;
+    
+    context.strokeStyle = 'black';
+    context.lineWidth = fontSize * 0.1;
+    context.lineJoin = 'round';
+    context.shadowColor = 'black';
+    context.shadowBlur = fontSize * 0.1;
+    context.shadowOffsetX = fontSize * 0.05;
+    context.shadowOffsetY = fontSize * 0.05;
+
+    context.strokeText(text, width / 2, height / 2);
+    context.fillText(text, width / 2, height / 2);
+    
+    // Reset shadow
+    context.shadowColor = 'transparent';
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
 }
 
 function addToDeck() {
@@ -282,6 +360,8 @@ function addToDeck() {
             bg: state.selectedBg,
             ov: state.selectedOverlay,
             ct: state.selectedCenter,
+            ot: state.overlayText,
+            ctt: state.centerText,
             quantity: 1
         });
     }
@@ -437,22 +517,24 @@ async function renderHighResCard(item) {
     tCtx.drawImage(bgImg, 0, 0, 697, 1098);
 
     if (item.ov) {
-        const ovImg = await loadImage(item.ov.path);
-        tCtx.drawImage(ovImg, 0, 0, 697, 1098);
+        if (item.ov.type === 'text') {
+            drawTextOverlay(tCtx, 697, 1098, item.ot);
+        } else {
+            const ovImg = await loadImage(item.ov.path);
+            tCtx.drawImage(ovImg, 0, 0, 697, 1098);
+        }
     }
 
     if (item.ct) {
-        const ctImg = await loadImage(item.ct.path);
-        const scale = 0.85;
-        const w = ctImg.width * scale * (697 / 400); // Scale relative to original design ratio
-        const h = ctImg.height * scale * (1098 / 600);
-        
-        // Ensure we fit correctly
-        const fitScale = Math.min(600 / ctImg.width, 940 / ctImg.height) * 0.85;
-        const finalW = ctImg.width * fitScale;
-        const finalH = ctImg.height * fitScale;
-        
-        tCtx.drawImage(ctImg, (697 - finalW) / 2, (1098 - finalH) / 2, finalW, finalH);
+        if (item.ct.type === 'text') {
+            drawTextCenter(tCtx, 697, 1098, item.ctt);
+        } else {
+            const ctImg = await loadImage(item.ct.path);
+            const fitScale = Math.min(600 / ctImg.width, 940 / ctImg.height) * 0.85;
+            const finalW = ctImg.width * fitScale;
+            const finalH = ctImg.height * fitScale;
+            tCtx.drawImage(ctImg, (697 - finalW) / 2, (1098 - finalH) / 2, finalW, finalH);
+        }
     }
 
     return tempCanvas.toDataURL('image/png');
@@ -488,8 +570,32 @@ function setupEventListeners() {
             updateDeckUI(); // Back side might change
         }
         else if (type === 'bg') state.selectedBg = ASSETS[state.selectedStyle].backgrounds.find(b => b.id === id);
-        else if (type === 'ov') state.selectedOverlay = id === 'none' ? null : ASSETS[state.selectedStyle].overlays.find(o => o.id === id);
-        else if (type === 'ct') state.selectedCenter = id === 'none' ? null : ASSETS[state.selectedStyle].centers.find(c => c.id === id);
+        else if (type === 'ov') {
+            if (id === 'none') {
+                state.selectedOverlay = null;
+                state.overlayText = '';
+            } else {
+                state.selectedOverlay = currentAssets.overlays.find(o => o.id === id);
+                if (state.selectedOverlay.type === 'text') {
+                    const txt = prompt('Enter Corner Text (e.g. 7, +, S):', state.overlayText);
+                    if (txt !== null) state.overlayText = txt;
+                    else if (!state.overlayText) { state.selectedOverlay = null; }
+                }
+            }
+        }
+        else if (type === 'ct') {
+            if (id === 'none') {
+                state.selectedCenter = null;
+                state.centerText = '';
+            } else {
+                state.selectedCenter = currentAssets.centers.find(c => c.id === id);
+                if (state.selectedCenter.type === 'text') {
+                    const txt = prompt('Enter Center Text (e.g. 7, wild, !):', state.centerText);
+                    if (txt !== null) state.centerText = txt;
+                    else if (!state.centerText) { state.selectedCenter = null; }
+                }
+            }
+        }
         
         renderAssetGrids();
         updateCanvas();
