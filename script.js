@@ -1,4 +1,4 @@
-const ASSETS = {
+let ASSETS = {
   default: {
     name: 'Default',
     back: './assets/default/UNO_BACK_SIDE.png',
@@ -62,6 +62,8 @@ const deckModal = document.getElementById('deckModal');
 const deckList = document.getElementById('deckList');
 const closeModal = document.getElementById('closeModal');
 const exportPdfBtn = document.getElementById('exportPdfBtn');
+const applyToAllBtn = document.getElementById('applyToAllBtn');
+const styleUploadInput = document.getElementById('styleUploadInput');
 
 function init() {
     loadStateFromUrl();
@@ -176,12 +178,26 @@ function updateUrl() {
 }
 
 function renderStyleGrid() {
-    styleGrid.innerHTML = Object.keys(ASSETS).map(stKey => `
+    let html = Object.keys(ASSETS).map(stKey => `
         <button class="asset-item ${state.selectedStyle === stKey ? 'active' : ''}" data-type="st" data-id="${stKey}">
             <img src="${ASSETS[stKey].back}" alt="${ASSETS[stKey].name}" style="transform: scale(0.8);" />
             <span>${ASSETS[stKey].name}</span>
         </button>
     `).join('');
+
+    // Add "Upload Style" button
+    html += `
+        <button class="asset-item" id="uploadStyleBtn">
+            <div class="empty-slot" style="font-size: 1.5rem;">+</div>
+            <span>Upload Style</span>
+        </button>
+    `;
+    
+    styleGrid.innerHTML = html;
+    
+    document.getElementById('uploadStyleBtn')?.addEventListener('click', () => {
+        styleUploadInput.click();
+    });
 }
 
 function renderAssetGrids() {
@@ -378,19 +394,28 @@ function renderDeckList() {
     state.deck.forEach((item, index) => {
         const cardEl = document.createElement('div');
         cardEl.className = 'deck-item';
+        const stylesOptions = Object.keys(ASSETS).map(st => 
+            `<option value="${st}" ${item.style === st ? 'selected' : ''}>${ASSETS[st].name}</option>`
+        ).join('');
+        
         cardEl.innerHTML = `
             <div class="deck-item-preview">
                 <canvas width="120" height="180" id="deck-canvas-${index}"></canvas>
             </div>
-            <div class="deck-item-controls">
-                <div class="quantity-control">
-                    <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+            <div class="deck-item-info">
+                <select class="style-select" onchange="changeItemStyle(${index}, this.value)">
+                    ${stylesOptions}
+                </select>
+                <div class="deck-item-controls">
+                    <div class="quantity-control">
+                        <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+                        <input type="number" class="qty-input" value="${item.quantity}" onchange="setItemQty(${index}, this.value)">
+                        <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeFromDeck(${index})">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
                 </div>
-                <button class="remove-btn" onclick="removeFromDeck(${index})">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                </button>
             </div>
         `;
         deckList.appendChild(cardEl);
@@ -439,6 +464,51 @@ window.updateQty = (index, delta) => {
 
 window.removeFromDeck = (index) => {
     state.deck.splice(index, 1);
+    saveDeck();
+    renderDeckList();
+};
+
+window.setItemQty = (index, value) => {
+    const qty = parseInt(value);
+    if (!isNaN(qty) && qty > 0) {
+        state.deck[index].quantity = qty;
+        saveDeck();
+    } else {
+        renderDeckList(); // Reset UI
+    }
+};
+
+window.applyStyleToAll = () => {
+    const currentStyle = state.selectedStyle;
+    state.deck.forEach((item, index) => {
+        window.changeItemStyle(index, currentStyle);
+    });
+};
+
+window.changeItemStyle = (index, newStyle) => {
+    const item = state.deck[index];
+    const oldStyle = item.style;
+    if (oldStyle === newStyle) return;
+
+    item.style = newStyle;
+    item.styleBack = ASSETS[newStyle].back;
+    
+    // Attempt to remap assets to the new style by ID
+    const newAssets = ASSETS[newStyle];
+    
+    if (item.bg) {
+        item.bg = newAssets.backgrounds.find(b => b.id === item.bg.id) || newAssets.backgrounds[0];
+    }
+    if (item.ov) {
+        item.ov = newAssets.overlays.find(o => o.id === item.ov.id) || newAssets.overlays[0] || null;
+    }
+    if (item.ct) {
+        item.ct = newAssets.centers.find(c => c.id === item.ct.id) || newAssets.centers[0] || null;
+    }
+    
+    // Update the aggregate ID
+    item.id = [newStyle, item.bg.id, item.ov?.id || 'none', item.ct?.id || 'none'].join('|');
+    
     saveDeck();
     renderDeckList();
 };

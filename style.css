@@ -424,6 +424,58 @@ canvas:active {
   filter: none;
 }
 
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.deck-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qty-input {
+  width: 40px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  outline: none;
+}
+
+/* Remove arrows from number input */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.style-select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.style-select:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-color);
+}
+
+.style-select option {
+  background: var(--surface-color);
+  color: #fff;
+}
+
 .deck-item-controls {
   display: flex;
   justify-content: space-between;
