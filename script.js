@@ -46,6 +46,7 @@ let state = {
     deck: JSON.parse(localStorage.getItem('uno_deck')) || []
 };
 
+
 const canvas = document.getElementById('cardCanvas');
 const ctx = canvas.getContext('2d');
 const styleGrid = document.getElementById('styleGrid');
