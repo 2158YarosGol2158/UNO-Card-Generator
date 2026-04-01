@@ -66,6 +66,43 @@
                 </div>
             </div>
 
+            <!-- Upload Style Modal -->
+            <div id="uploadModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content premium-card style-upload-modal">
+                    <div class="modal-header">
+                        <h2>Upload Custom Style</h2>
+                        <button id="closeUploadModal" class="close-button">&times;</button>
+                    </div>
+                    <div class="upload-form">
+                        <div class="form-group">
+                            <label>Style Name</label>
+                            <input type="text" id="customStyleName" placeholder="My Epic Theme" class="modal-input">
+                        </div>
+                        <div class="upload-grid">
+                            <div class="upload-box">
+                                <span>Backgrounds</span>
+                                <input type="file" id="upBg" multiple accept="image/*">
+                            </div>
+                            <div class="upload-box">
+                                <span>Corners/Overlays</span>
+                                <input type="file" id="upOv" multiple accept="image/*">
+                            </div>
+                            <div class="upload-box">
+                                <span>Centers</span>
+                                <input type="file" id="upCt" multiple accept="image/*">
+                            </div>
+                            <div class="upload-box">
+                                <span>Card Back</span>
+                                <input type="file" id="upBack" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="createStyleBtn" class="button primary full-width">Create Style</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="controls-section">
                 <div class="control-group premium-card">
                     <h3>Card Style</h3>

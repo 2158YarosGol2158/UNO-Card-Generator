@@ -64,7 +64,14 @@ const deckList = document.getElementById('deckList');
 const closeModal = document.getElementById('closeModal');
 const exportPdfBtn = document.getElementById('exportPdfBtn');
 const applyToAllBtn = document.getElementById('applyToAllBtn');
-const styleUploadInput = document.getElementById('styleUploadInput');
+const uploadModal = document.getElementById('uploadModal');
+const closeUploadModal = document.getElementById('closeUploadModal');
+const createStyleBtn = document.getElementById('createStyleBtn');
+const customStyleName = document.getElementById('customStyleName');
+const upBg = document.getElementById('upBg');
+const upOv = document.getElementById('upOv');
+const upCt = document.getElementById('upCt');
+const upBack = document.getElementById('upBack');
 
 function init() {
     loadStateFromUrl();
@@ -197,7 +204,7 @@ function renderStyleGrid() {
     styleGrid.innerHTML = html;
     
     document.getElementById('uploadStyleBtn')?.addEventListener('click', () => {
-        styleUploadInput.click();
+        uploadModal.style.display = 'flex';
     });
 }
 
@@ -624,23 +631,31 @@ function setupEventListeners() {
     document.addEventListener('click', (e) => {
         const item = e.target.closest('.asset-item');
         if (!item) return;
+        
+        // Handle special Upload button separately (already handled in renderStyleGrid)
+        if (item.id === 'uploadStyleBtn') return;
+
         const type = item.dataset.type;
         const id = item.dataset.id;
-        
         const currentAssets = ASSETS[state.selectedStyle];
 
         if (type === 'st') {
             state.selectedStyle = id;
-            // When style changes, try to keep the same asset IDs if they exist in the new style
             const newAssets = ASSETS[state.selectedStyle];
             state.selectedBg = newAssets.backgrounds.find(b => b.id === state.selectedBg.id) || newAssets.backgrounds[0];
             if (state.selectedOverlay) state.selectedOverlay = newAssets.overlays.find(o => o.id === state.selectedOverlay.id) || null;
             if (state.selectedCenter) state.selectedCenter = newAssets.centers.find(c => c.id === state.selectedCenter.id) || null;
             
             renderStyleGrid();
-            updateDeckUI(); // Back side might change
+            renderAssetGrids();
+            updateCanvas();
+            updateDeckUI();
         }
-        else if (type === 'bg') state.selectedBg = ASSETS[state.selectedStyle].backgrounds.find(b => b.id === id);
+        else if (type === 'bg') {
+            state.selectedBg = ASSETS[state.selectedStyle].backgrounds.find(b => b.id === id);
+            renderAssetGrids();
+            updateCanvas();
+        }
         else if (type === 'ov') {
             if (id === 'none') {
                 state.selectedOverlay = null;
@@ -653,6 +668,8 @@ function setupEventListeners() {
                     else if (!state.overlayText) { state.selectedOverlay = null; }
                 }
             }
+            renderAssetGrids();
+            updateCanvas();
         }
         else if (type === 'ct') {
             if (id === 'none') {
@@ -666,10 +683,9 @@ function setupEventListeners() {
                     else if (!state.centerText) { state.selectedCenter = null; }
                 }
             }
+            renderAssetGrids();
+            updateCanvas();
         }
-        
-        renderAssetGrids();
-        updateCanvas();
         updateUrl();
     });
 
@@ -716,16 +732,83 @@ function setupEventListeners() {
         addToDeck();
     });
 
-    // Modal
+    // Modals
     deckContainer.addEventListener('click', () => {
         deckModal.style.display = 'flex';
         renderDeckList();
     });
     closeModal.addEventListener('click', () => deckModal.style.display = 'none');
     exportPdfBtn.addEventListener('click', exportToPDF);
+    applyToAllBtn.addEventListener('click', () => window.applyStyleToAll());
+    
+    closeUploadModal.addEventListener('click', () => {
+        uploadModal.style.display = 'none';
+    });
+    createStyleBtn.addEventListener('click', finalizeCustomStyle);
+
     window.addEventListener('click', (e) => {
         if (e.target === deckModal) deckModal.style.display = 'none';
+        if (e.target === uploadModal) uploadModal.style.display = 'none';
     });
+}
+
+async function finalizeCustomStyle() {
+    const name = customStyleName.value.trim() || 'Custom Style';
+    const styleId = 'custom_' + Date.now();
+    
+    const newStyle = {
+        name: name,
+        back: '',
+        backgrounds: [],
+        overlays: [{ id: 'text', name: 'Custom Text', type: 'text' }],
+        centers: [{ id: 'text', name: 'Custom Text', type: 'text' }]
+    };
+
+    const readFile = (file) => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+    });
+
+    // Process Back
+    if (upBack.files.length > 0) {
+        newStyle.back = await readFile(upBack.files[0]);
+    }
+
+    // Process Backgrounds
+    for (let i = 0; i < upBg.files.length; i++) {
+        const data = await readFile(upBg.files[i]);
+        newStyle.backgrounds.push({ id: `bg_${i}`, name: upBg.files[i].name, path: data });
+    }
+
+    // Process Overlays
+    for (let i = 0; i < upOv.files.length; i++) {
+        const data = await readFile(upOv.files[i]);
+        newStyle.overlays.push({ id: `ov_${i}`, name: upOv.files[i].name, path: data });
+    }
+
+    // Process Centers
+    for (let i = 0; i < upCt.files.length; i++) {
+        const data = await readFile(upCt.files[i]);
+        newStyle.centers.push({ id: `ct_${i}`, name: upCt.files[i].name, path: data });
+    }
+
+    if (newStyle.backgrounds.length === 0) {
+        alert('Please upload at least one background image.');
+        return;
+    }
+
+    if (!newStyle.back) newStyle.back = newStyle.backgrounds[0].path;
+
+    ASSETS[styleId] = newStyle;
+    state.selectedStyle = styleId;
+    state.selectedBg = newStyle.backgrounds[0];
+    
+    uploadModal.style.display = 'none';
+    renderStyleGrid();
+    renderAssetGrids();
+    updateCanvas();
+    updateUrl();
 }
 
 init();

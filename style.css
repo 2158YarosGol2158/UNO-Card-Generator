@@ -472,9 +472,68 @@ canvas:active {
   border-color: var(--accent-color);
 }
 
-.style-select option {
-  background: var(--surface-color);
+/* Style Upload Modal */
+.style-upload-modal {
+  max-width: 600px;
+}
+
+.upload-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
   color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  outline: none;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.upload-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed var(--glass-border);
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-box span {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.upload-box input[type="file"] {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.modal-footer {
+  margin-top: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #cbd5e1;
 }
 
 .deck-item-controls {
