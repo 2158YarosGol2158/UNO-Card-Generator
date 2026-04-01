@@ -93,10 +93,29 @@
             </div>
         </main>
         <footer class="app-footer">
-            <p>UNO Card Generator | v2.6</p>
+            <p>UNO Card Generator | <span id="version">loading...</span></p>
             <p>Created by Yaros | 2026</p>
         </footer>
     </div>
     <script src="script.js"></script>
+    <script>
+        fetch("https://api.github.com/repos/2158YarosGol2158/UNO-Card-Generator/commits/main")
+        .then(res => res.json())
+        .then(data => {
+            let msg = data.commit.message;
+            msg = msg.replace(/^Update\s*/i, "");
+            const match = msg.match(/v\d+\.\d+\.\d+/);
+            if (match) {
+            msg = match[0];
+            } else {
+            msg = "dev build";
+            }
+
+            document.getElementById("version").textContent = msg;
+        })
+        .catch(() => {
+            document.getElementById("version").textContent = "offline";
+        });
+</script>
 </body>
 </html>
